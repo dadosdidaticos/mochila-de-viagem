@@ -25,21 +25,50 @@ function adicionaNovoItem (nome,quantidade) {
         if(document.querySelector('.message')){
             form.removeChild(document.querySelector('.message'))
         }
-        const novoItem = document.createElement('li')
-        novoItem.classList.add('item')
-        novoItem.innerHTML = `<strong>${quantidade}</strong>${nome}`
-        lista.appendChild(novoItem)
-        const item = {
-            nome:nome,
-            quantidade:quantidade
-        }
-        itens.push(item)
-        localStorage.setItem("lista",JSON.stringify(itens))
+
+            const novoItem = document.createElement('li')
+            novoItem.classList.add('item')
+            novoItem.innerHTML = `<strong>${quantidade}</strong>${nome}`
+            lista.appendChild(novoItem)
+            const item = {
+                nome:nome,
+                quantidade:quantidade
+            }
+            itens.push(item)
+        localStorage.setItem("lista",JSON.stringify(itens))  
     }
 }
+
 function recuperarItens(){
-    const itens = JSON.parse(localStorage.lista)
-    itens.forEach(item => {
-        adicionaNovoItem(item.nome,item.quantidade)
-    });
+    if(localStorage.lista!==undefined){
+        const itens = JSON.parse(localStorage.lista)
+        itens.forEach(item => {
+            adicionaNovoItem(item.nome,item.quantidade)
+        });
+    }
+}
+
+function verificarEAtualizarItem(nomeNovoItem,quantidadeNovoItem) {
+    const listaItens = document.querySelectorAll('.item')
+    if (listaItens && localStorage.lista!==undefined){
+        const itensSalvos = JSON.parse(localStorage.lista)
+        for (let i = 0; i < itensSalvos.length; i++) {
+            const item = itensSalvos[i];
+            let quantidade = parseInt(quantidadeNovoItem)
+            if(nomeNovoItem===item.nome){
+                quantidade += parseInt(quantidadeNovoItem)
+                itensSalvos[i].quantidade = quantidade
+            }  
+            listaItens.forEach(item => {
+                let nome = item.innerText.split('\n')[1]
+                let quantidade = parseInt(item.innerText.split('\n')[0])
+                //atualizando a tela
+                if(nomeNovoItem === nome){
+                    quantidade += parseInt(quantidadeNovoItem)
+                    item.innerHTML = `<strong>${quantidade}</strong>${nome}`
+                }
+            });
+        }
+        localStorage.setItem("lista",JSON.stringify(itensSalvos))
+    }
 }
